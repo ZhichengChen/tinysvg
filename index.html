@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Tiny SVG </title>
+	<link rel="stylesheet" href="./css/materialize.min.css">
+	<script src="./js/materialize.min.js"></script>
+	<style>
+	html,
+	body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	
+	html {
+		font-family: roboto, sans-serif;
+		-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+		background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%202%202%22%3E%3Cpath%20d%3D%22M1%202V0h1v1H0v1z%22%20fill-opacity%3D%22.05%22%2F%3E%3C%2Fsvg%3E");
+		background-size: 16px 16px;
+		background-color: #f2f2f2;
+		transition: background-color 0.2s ease-in-out
+	}
+	
+	#settings {
+		height: 100vh;
+		background: white;
+		overflow: scroll;
+		position: fixed;
+		top: 0;
+		right: 0;
+	}
+	
+	.right_bottom {
+		position: fixed;
+		bottom: 10px;
+		right: 40%;
+	}
+	
+	#info {
+		background: #FFF;
+		color: #000;
+		box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+		padding: 7px 11px;
+		font-size: 0.9rem;
+		padding-right: 25px;
+		border-radius: 2px;
+		position: fixed;
+		width: 200px;
+		height: 30px;
+		bottom: 22px;
+		right: 44%;
+	}
+	
+	#holder {
+		width: 50%;
+		height: 30%;
+		display: flex;
+		border: dashed 1px #555;
+		border-radius: 10px;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+		flex-direction: column;
+	}
+	
+	#holder .material-icons {
+		font-size: 50px;
+	}
+	
+	#holder:hover {
+		border: dashed 1px #34AADC;
+	}
+	
+	#flex-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		color: #555;
+	}
+	
+	#row,
+	#info,
+	#btn {
+		display: none;
+	}
+	
+	.back {
+		position: fixed;
+		top: 10px;
+		left: 10px;
+		z-index: 10px;
+		color: #2196F3;
+	}
+	
+	#container {
+		margin: 10px;
+		margin-top: 60px;
+	}
+
+	/* fallback */
+	@font-face {
+	  font-family: 'Material Icons';
+	  font-style: normal;
+	  font-weight: 400;
+	  src: url(./font/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2) format('woff2');
+	}
+
+	.material-icons {
+	  font-family: 'Material Icons';
+	  font-weight: normal;
+	  font-style: normal;
+	  font-size: 24px;
+	  line-height: 1;
+	  letter-spacing: normal;
+	  text-transform: none;
+	  display: inline-block;
+	  white-space: nowrap;
+	  word-wrap: normal;
+	  direction: ltr;
+	  -webkit-font-feature-settings: 'liga';
+	  -webkit-font-smoothing: antialiased;
+	}
+</style>
+</head>
+
+<body>
+	<div id="flex-container">
+		<div id="holder" onclick="chooseFile()">
+			<i class="large material-icons">cloud_upload</i><br/>
+			<span>Drag files into or click to open</span>
+		</div>
+	</div>
+
+	<div class="row" id="row">
+		<div class="back" onclick="back()">
+			<i class="material-icons medium">chevron_left</i>
+		</div>
+		<div class="col s8" id="container">
+			<div class="row" id="cards">
+
+			</div>
+		</div>
+		<div class="col s4" id="settings">
+			<form action="#" id="my-form">
+				<p class="range-field">
+					<span>Precision</span>
+					<input type="range" name="floatPrecision" min="0" max="8" />
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeDoctype" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove Doctype</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeXMLProcInst" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove XML instructions</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeComments" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove comments</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeMetadata" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove &lt;metadata&gt;</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeXMLNS">
+								<span class="lever"></span>
+							</label>
+							<span>Remove xmlns</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeEditorsNSData" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove editor data</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="cleanupAttrs" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Cleanup attribute whitespace</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="inlineStyles" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Inline styles</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="minifyStyles" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Minify styles</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="convertStyleToAttrs" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Style to attributes</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="cleanupIDs" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Clean IDs</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeRasterImages">
+								<span class="lever"></span>
+							</label>
+							<span>Remove raster images</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeUselessDefs" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove unused defs</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="cleanupNumericValues">
+								<span class="lever"></span>
+							</label>
+							<span>Round/rewrite numbers</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="cleanupListOfValues" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Round/rewrite number lists</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="convertColors" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Minify colours</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeUnknownsAndDefaults" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove unknowns &amp; defaults</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeNonInheritableGroupAttrs" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove unneeded group attrs</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeUselessStrokeAndFill" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove useless stroke &amp; fill</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeViewBox" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove viewBox</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="cleanupEnableBackground" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove/tidy enable-background</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeHiddenElems" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove hidden elements</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeEmptyText" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove empty text</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="convertShapeToPath" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Shapes to (smaller) paths</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="moveElemsAttrsToGroup" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Move attrs to parent group</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="moveGroupAttrsToElems" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Move group attrs to elements</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="collapseGroups" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Collapse useless groups</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="convertPathData" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Round/rewrite paths</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="convertTransform" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Round/rewrite transforms</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeEmptyAttrs" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove empty attrs</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeEmptyContainers" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove empty containers</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="mergePaths" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Merge paths</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeUnusedNS" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove unused namespaces</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="sortAttrs">
+								<span class="lever"></span>
+							</label>
+							<span>Sort attrs</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeTitle" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove &lt;title&gt;</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeDesc" checked>
+								<span class="lever"></span>
+							</label>
+							<span>Remove &lt;desc&gt;</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeDimensions">
+								<span class="lever"></span>
+							</label>
+							<span>Prefer viewBox to width/height</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeStyleElement">
+								<span class="lever"></span>
+							</label>
+							<span>Remove style elements</span>
+						</div>
+					</label>
+				</p>
+				<p>
+					<label>
+						<div class="switch">
+							<label>
+								<input type="checkbox" name="removeScriptElement">
+								<span class="lever"></span>
+							</label>
+							<span>Remove script elements</span>
+						</div>
+					</label>
+				</p>
+			</form>
+		</div>
+	</div>
+
+
+	<div id="info">
+	</div>
+
+	<a class="btn-floating btn-large waves-effect waves-light blue right_bottom " onClick="downloadSVG()" id="btn"><i
+		class="material-icons">file_download</i></a>
+
+		<script>
+			var JSZip = require("jszip");
+			var files;
+			var svgData;
+			var plugin = [];
+			var removeDoctype = require('svgo/plugins/removeDoctype');
+			var removeXMLProcInst = require('svgo/plugins/removeXMLProcInst');
+			var removeComments = require('svgo/plugins/removeComments');
+			var removeMetadata = require('svgo/plugins/removeMetadata');
+			var removeXMLNS = require('svgo/plugins/removeXMLNS');
+			var removeEditorsNSData = require('svgo/plugins/removeEditorsNSData');
+			var cleanupAttrs = require('svgo/plugins/cleanupAttrs');
+			var inlineStyles = require('svgo/plugins/inlineStyles');
+			var minifyStyles = require('svgo/plugins/minifyStyles');
+			var convertStyleToAttrs = require('svgo/plugins/convertStyleToAttrs');
+			var cleanupIDs = require('svgo/plugins/cleanupIDs');
+			var removeRasterImages = require('svgo/plugins/removeRasterImages');
+			var removeUselessDefs = require('svgo/plugins/removeUselessDefs');
+			var cleanupNumericValues = require('svgo/plugins/cleanupNumericValues');
+			var cleanupListOfValues = require('svgo/plugins/cleanupListOfValues');
+			var convertColors = require('svgo/plugins/convertColors');
+			var removeUnknownsAndDefaults = require('svgo/plugins/removeUnknownsAndDefaults');
+			var removeNonInheritableGroupAttrs = require('svgo/plugins/removeNonInheritableGroupAttrs');
+			var removeUselessStrokeAndFill = require('svgo/plugins/removeUselessStrokeAndFill');
+			var removeViewBox = require('svgo/plugins/removeViewBox');
+			var cleanupEnableBackground = require('svgo/plugins/cleanupEnableBackground');
+			var removeHiddenElems = require('svgo/plugins/removeHiddenElems');
+			var removeEmptyText = require('svgo/plugins/removeEmptyText');
+			var convertShapeToPath = require('svgo/plugins/convertShapeToPath');
+			var moveElemsAttrsToGroup = require('svgo/plugins/moveElemsAttrsToGroup');
+			var moveGroupAttrsToElems = require('svgo/plugins/moveGroupAttrsToElems');
+			var collapseGroups = require('svgo/plugins/collapseGroups');
+			var convertPathData = require('svgo/plugins/convertPathData');
+			var convertTransform = require('svgo/plugins/convertTransform');
+			var removeEmptyAttrs = require('svgo/plugins/removeEmptyAttrs');
+			var removeEmptyContainers = require('svgo/plugins/removeEmptyContainers');
+			var mergePaths = require('svgo/plugins/mergePaths');
+			var removeUnusedNS = require('svgo/plugins/removeUnusedNS');
+			var sortAttrs = require('svgo/plugins/sortAttrs');
+			var removeTitle = require('svgo/plugins/removeTitle');
+			var removeDesc = require('svgo/plugins/removeDesc');
+			var removeDimensions = require('svgo/plugins/removeDimensions');
+			var removeStyleElement = require('svgo/plugins/removeStyleElement');
+			var removeScriptElement = require('svgo/plugins/removeScriptElement');
+			var plugins = require('svgo/lib/svgo/plugins');
+
+			const pluginsData = {
+				removeDoctype,
+				removeXMLProcInst,
+				removeComments,
+				removeMetadata,
+				removeXMLNS,
+				removeEditorsNSData,
+				cleanupAttrs,
+				inlineStyles,
+				minifyStyles,
+				convertStyleToAttrs,
+				cleanupIDs,
+            //prefixIds,
+            removeRasterImages,
+            removeUselessDefs,
+            cleanupNumericValues,
+            cleanupListOfValues,
+            convertColors,
+            removeUnknownsAndDefaults,
+            removeNonInheritableGroupAttrs,
+            removeUselessStrokeAndFill,
+            removeViewBox,
+            cleanupEnableBackground,
+            removeHiddenElems,
+            removeEmptyText,
+            convertShapeToPath,
+            moveElemsAttrsToGroup,
+            moveGroupAttrsToElems,
+            collapseGroups,
+            convertPathData,
+            convertTransform,
+            removeEmptyAttrs,
+            removeEmptyContainers,
+            mergePaths,
+            removeUnusedNS,
+            sortAttrs,
+            removeTitle,
+            removeDesc,
+            removeDimensions,
+            //removeAttrs,
+            //removeElementsByAttr,
+            //addClassesToSVGElement,
+            removeStyleElement,
+            removeScriptElement,
+            //addAttributesToSVGElement,
+        };
+
+        const {
+        	dialog
+        } = require('electron').remote;
+
+        function chooseFile() {
+        	dialog.showOpenDialog({
+        		properties: ['openFile', 'multiSelections']
+        	}, function(f) {
+        		if (f !== undefined) {
+        			files = f.map(function(f) {
+        				return {
+        					path: f,
+        					name: f.split('/').pop()
+        				}
+        			});
+        			document.getElementById('flex-container').setAttribute('style', 'display:none');
+        			document.getElementById('row').setAttribute('style', 'display:block');
+        			document.getElementById('info').setAttribute('style', 'display:block');
+        			document.getElementById('btn').setAttribute('style', 'display:block');
+        			changeHandler();
+        			getFile();
+        		}
+        	});
+        }
+
+        document.addEventListener('drop', function(e) {
+        	e.preventDefault();
+        	e.stopPropagation();
+        	files = e.dataTransfer.files;
+        	document.getElementById('flex-container').setAttribute('style', 'display:none');
+        	document.getElementById('row').setAttribute('style', 'display:block');
+        	document.getElementById('info').setAttribute('style', 'display:block');
+        	document.getElementById('btn').setAttribute('style', 'display:block');
+        	getFile();
+        });
+        document.addEventListener('dragover', function(e) {
+        	e.preventDefault();
+        	e.stopPropagation();
+        });
+
+        var SVGO = require('svgo');
+        var svgDatas = {};
+        var svgo;
+
+        function getFile() {
+        	var html = '';
+        	svgo = new SVGO({
+        		plugin
+        	});
+            for (let f of files) {
+            	var FS = require('fs'),
+            	PATH = require('path'),
+            	filepath = PATH.resolve(__dirname, f.path);
+
+
+
+            	FS.readFile(filepath, 'utf8', function(err, data) {
+
+            		if (err) {
+            			throw err;
+            		}
+
+            		svgo.optimize(data, {
+            			path: filepath
+            		}).then(function(result) {
+
+            			if (files.length > 1) {
+            				let blob = new Blob([result.data], {
+            					type: 'image/svg+xml'
+            				});
+            				let url = URL.createObjectURL(blob);
+            				svgDatas[f.name] = {
+            					data: result.data,
+            					origin: data.length,
+            					tiny: blob.size
+            				};
+            				document.getElementById('info').setAttribute('style', 'display: none;')
+            				html += ` <div class="col s4">
+            				<div class="card">
+            				<div class="card-image">
+            				<img src="${url}">
+            				</div>
+            				<div class="card-content">
+            				<p>${data.length / 1000 + 'k -> ' + blob.size / 1000 + 'k ' + ((blob.size / data.length) * 100).toFixed(2) + '%'}</p>
+            				</div>
+            				<div class="card-action">
+            				<a href="#">${f.name}</a>
+            				</div>
+            				</div>
+            				</div>
+            				`
+            				document.getElementById('cards').innerHTML = html;
+            			} else {
+            				svgData = result.data;
+
+            				let blob = new Blob([result.data], {
+            					type: 'image/svg+xml'
+            				});
+            				document.getElementById('info').innerHTML = data.length / 1000 + 'k -> ' + blob.size / 1000 + 'k ' + ((blob.size / data.length) * 100).toFixed(2) + '%';
+            				let url = URL.createObjectURL(blob);
+            				let image = document.createElement('img');
+            				image.src = url;
+            				document.getElementById('cards').innerHTML = '';
+            				document.getElementById('cards').appendChild(image);
+            			}
+            		});
+
+            	});
+            }
+        }
+
+        function toJSONString(form) {
+        	var elements = form.querySelectorAll("input, select, textarea");
+        	plugin = [];
+        	for (var i = 0; i < elements.length; ++i) {
+        		var obj = {};
+        		var element = elements[i];
+        		var name = element.name;
+        		var value = element.checked;
+        		if (name === "floatPrecision") {
+        			continue;
+        		}
+
+        		if (name) {
+        			obj[name] = value;
+        		}
+        		plugin.push(obj);
+        	}
+
+        	for (const plugin of Object.values(pluginsData)) {
+        		if (plugin.params && 'floatPrecision' in plugin.params) {
+        			plugin.params.floatPrecision = document.getElementsByName('floatPrecision')[0].value * 1;
+        		}
+        	}
+        }
+
+        var inputs = document.getElementsByTagName("input");
+        for (i = 0; i < inputs.length; i++) {
+        	inputs[i].onchange = changeHandler;
+        }
+
+        function changeHandler() {
+        	var form = document.getElementById("my-form");
+
+        	toJSONString(form);
+        	getFile();
+        }
+
+
+        function svgDataURL(svgAsXML) {
+        	return "data:image/svg+xml," + encodeURIComponent(svgAsXML);
+        }
+
+
+        function download(filename, dataURL) {
+        	var dl = document.createElement("a");
+        	document.body.appendChild(dl);
+        	dl.setAttribute("href", dataURL);
+        	dl.setAttribute("download", filename);
+        	dl.click();
+        }
+
+
+        function downloadSVG() {
+        	if (files.length > 1) {
+        		var zip = new JSZip();
+        		Object.keys(svgDatas).forEach(function(s) {
+        			zip.file(s, svgDatas[s].data);
+        		})
+        		zip.generateAsync({
+        			type: "blob"
+        		})
+        		.then(function(content) {
+        			download('tiny-svg.zip', window.URL.createObjectURL(content));
+        		});
+        	} else {
+        		download('tiny-svg.svg', svgDataURL(svgData));
+        	}
+        }
+
+        function back() {
+        	document.getElementById('flex-container').setAttribute('style', 'display:flex');
+        	document.getElementById('row').setAttribute('style', 'display:none');
+        	document.getElementById('info').setAttribute('style', 'display:none');
+        	document.getElementById('btn').setAttribute('style', 'display:none');
+        }
+        require('./renderer.js')
+    </script>
+</body>
+
+</html>

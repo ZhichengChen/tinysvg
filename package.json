@@ -1,0 +1,35 @@
+{
+  "name": "tinysvg",
+  "version": "1.0.0",
+  "description": "GUI for SVGO inspire by https://github.com/jakearchibald/svgomg",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=tinysvg.icns --prune=true --out=release-builds",
+    "package-mac-dmg": "electron-installer-dmg ./release-builds/tinysvg-darwin-x64/tinysvg.app tinysvg --out ./release-builds/tinysvg-darwin-x64/ --icon=tinysvg.icns --overwrite",
+    "package-win": "electron-packager . tinysvg --overwrite --asar=true --platform=win32 --arch=ia32 --icon=tinysvg.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"tinypsvg\"",
+    "package-linux": "electron-packager . tinysvg --overwrite --asar=true --platform=linux --arch=x64 --icon=tinysvg.png --prune=true --out=release-builds",
+    "package-deb": "electron-installer-debian --src release-builds/tinysvg-linux-x64/ --dest release-builds/tinysvg-linux-x64/ --arch amd64"
+  },
+  "repository": "https://github.com/ZhichengChen/tinysvg",
+  "keywords": [
+    "tinysvg",
+    "svgo",
+    "svgomg",
+    "GUI"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^4.1.4",
+    "electron-installer-debian": "^1.1.1",
+    "electron-installer-dmg": "^2.0.0",
+    "electron-packager": "^13.1.1",
+    "electron-winstaller": "^3.0.4",
+    "electron-wix-msi": "^2.1.1"
+  },
+  "dependencies": {
+    "jszip": "^3.2.1",
+    "svgo": "^1.2.2"
+  }
+}
