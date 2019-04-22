@@ -7,7 +7,9 @@ GUI for SVGO inspire by [svgomg](https://github.com/jakearchibald/svgomg)
 # Download and use
 
 Mac OS X – [tinysvg-darwin-x64.dmg](https://github.com/ZhichengChen/tinysvg/releases/download/v1.0.0/tinysvg-darwin-x64.dmg)
+
 Windows – [tinysvg-linux-x64.zip](https://github.com/ZhichengChen/tinysvg/releases/download/v1.0.0/tinysvg-linux-x64.zip)
+
 Linux – [tinysvg-win32-ia32.zip](https://github.com/ZhichengChen/tinysvg/releases/download/v1.0.0/tinysvg-win32-ia32.zip)
 
 # Running locally
